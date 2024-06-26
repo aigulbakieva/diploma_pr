@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from module.models import Module
+
+@admin.register(Module)
+class ModuleAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk', 'owner', 'number', 'name', 'description',)
