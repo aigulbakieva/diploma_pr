@@ -9,6 +9,10 @@ class Module(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец"
     )
+    preview = models.ImageField(
+        upload_to="module/previews", verbose_name="Картинка", blank=True, null=True
+    )
+    video_url = models.URLField(verbose_name="ссылка на видео", null=True, blank=True)
 
     def __str__(self):
         return self.name
