@@ -7,7 +7,11 @@ class Module(models.Model):
     name = models.CharField(max_length=150, verbose_name="Название модуля")
     description = models.TextField(verbose_name="Описание модуля")
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        blank=True,
+        null=True,
     )
     preview = models.ImageField(
         upload_to="module/previews", verbose_name="Картинка", blank=True, null=True
@@ -20,3 +24,29 @@ class Module(models.Model):
     class Meta:
         verbose_name = "Модуль"
         verbose_name_plural = "Модули"
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+        related_name="subscription",
+    )
+    module = models.ForeignKey(
+        Module,
+        null=True,
+        blank=True,
+        verbose_name="Модуль",
+        on_delete=models.CASCADE,
+        related_name="subscription",
+    )
+
+    def __str__(self):
+        return f"{self.user} - {self.module}"
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"

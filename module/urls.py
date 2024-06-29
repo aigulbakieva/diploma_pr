@@ -7,6 +7,7 @@ from module.views import (
     ModuleRetrieveApiView,
     ModuleDestroyApiView,
     ModuleUpdateApiView,
+    SubscriptionApiView,
 )
 
 app_name = ModuleConfig.name
@@ -18,4 +19,5 @@ urlpatterns = [
     path("create/", ModuleCreateApiView.as_view(), name="module-create"),
     path("delete/<int:pk>/", ModuleDestroyApiView.as_view(), name="module-delete"),
     path("update/<int:pk>/", ModuleUpdateApiView.as_view(), name="module-update"),
+    path("subscription/", SubscriptionApiView.as_view(), name="subscription-list"),
 ]
