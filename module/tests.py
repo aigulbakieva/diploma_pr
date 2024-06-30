@@ -1,9 +1,13 @@
+from unittest import TestCase
+
+from django.db.migrations import serializer
 from rest_framework.test import APITestCase
 
 from module.models import Module
+from module.validators import YoutubeValidator
 from users.models import User
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import status, serializers
 
 
 class ModuleTestCase(APITestCase):
@@ -30,6 +34,19 @@ class ModuleTestCase(APITestCase):
 
     def test_module_create(self):
         url = reverse("module:module-create")
+        data = {
+            "owner": self.user.pk,
+            "number": 8,
+            "name": "Общая теория относительности",
+            "description": "Необходимость модификации ньютоновской теории гравитации."
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED
+        )
+
+    def test_module_retrieve(self):
+        url = reverse("module:module-retrieve")
         data = {
             "owner": self.user.pk,
             "number": 8,
@@ -90,3 +107,18 @@ class ModuleTestCase(APITestCase):
         )
         self.assertEqual(
             Module.objects.all().count(), 0)
+
+
+class ValidatorTestCase(TestCase):
+    def test_youtube_validator(self):
+        youtube_validator = YoutubeValidator(field="video_url")
+
+        with self.assertRaises(serializers.ValidationError) as context:
+            youtube_validator({'video_url': 'https//www.words.com'})
+
+        self.assertIn("Недопустимая ссылка на видео.", str(context.exception))
+
+        try:
+            youtube_validator({'video_url': 'https://www.youtube.com/watch?v=hcm55lU9knw'})
+        except serializers.ValidationError:
+            self.fail('youtube_validator raised ValidatorError unexpectedly!')
