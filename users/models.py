@@ -9,10 +9,18 @@ class User(AbstractUser):
         unique=True, verbose_name="Почта", help_text="Укажите почту"
     )
     first_name = models.CharField(
-        max_length=50, verbose_name="Имя", help_text="Укажите имя"
+        max_length=50,
+        verbose_name="Имя",
+        help_text="Укажите имя",
+        blank=True,
+        null=True,
     )
     last_name = models.CharField(
-        max_length=50, verbose_name="Фамилия", help_text="Укажите фамилию"
+        max_length=50,
+        verbose_name="Фамилия",
+        help_text="Укажите фамилию",
+        blank=True,
+        null=True,
     )
     phone = models.CharField(
         max_length=50,

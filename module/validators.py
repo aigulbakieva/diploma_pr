@@ -8,5 +8,4 @@ class YoutubeValidator:
     def __call__(self, value):
         video_url = dict(value).get(self.field)
         if video_url and not video_url.startswith("https://www.youtube.com/watch?v="):
-            raise ValidationError(
-                "Недопустимая ссылка на видео.")
+            raise ValidationError("Недопустимая ссылка на видео.")

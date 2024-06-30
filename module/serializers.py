@@ -7,5 +7,6 @@ class ModuleSerializer(ModelSerializer):
     class Meta:
         model = Module
         fields = "__all__"
-        validators = [YoutubeValidator(field='video_url'),]
-
+        validators = [
+            YoutubeValidator(field="video_url"),
+        ]

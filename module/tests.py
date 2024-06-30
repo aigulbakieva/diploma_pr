@@ -27,7 +27,7 @@ class ModuleTestCase(APITestCase):
             owner=self.user,
             number=8,
             name="Общая теория относительности",
-            description="Необходимость модификации ньютоновской теории гравитации."
+            description="Необходимость модификации ньютоновской теории гравитации.",
         )
 
     def test_module_create(self):
@@ -36,14 +36,10 @@ class ModuleTestCase(APITestCase):
             "owner": self.user.pk,
             "number": 8,
             "name": "Общая теория относительности",
-            "description": "Необходимость модификации ньютоновской теории гравитации."
+            "description": "Необходимость модификации ньютоновской теории гравитации.",
         }
         response = self.client.post(url, data)
-        self.assertEqual(
-            response.status_code, status.HTTP_201_CREATED
-        )
-
-
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_module_list(self):
         url = reverse("module:module-list")
@@ -59,12 +55,11 @@ class ModuleTestCase(APITestCase):
                     "owner": self.user.pk,
                     "number": 8,
                     "name": "Общая теория относительности",
-                    "description": "Необходимость модификации ньютоновской теории гравитации."
-                }, ]
+                    "description": "Необходимость модификации ньютоновской теории гравитации.",
+                },
+            ],
         }
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_module_update(self):
         url = reverse("module:module-update", args=(self.module.pk,))
@@ -72,13 +67,11 @@ class ModuleTestCase(APITestCase):
             "owner": self.user.pk,
             "number": 8,
             "name": "test",
-            "description": "test"
+            "description": "test",
         }
         response = self.client.patch(url, data)
         data = response.json()
-        self.assertEqual(
-            response.status_code, status.HTTP_200_OK
-        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_module_delete(self):
         url = reverse("module:module-delete", args=(self.module.pk,))
@@ -86,14 +79,11 @@ class ModuleTestCase(APITestCase):
             "owner": self.user.pk,
             "number": 8,
             "name": "test",
-            "description": "test"
+            "description": "test",
         }
         response = self.client.delete(url, data)
-        self.assertEqual(
-            response.status_code, status.HTTP_204_NO_CONTENT
-        )
-        self.assertEqual(
-            Module.objects.all().count(), 0)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Module.objects.all().count(), 0)
 
 
 class ValidatorTestCase(TestCase):
@@ -101,24 +91,38 @@ class ValidatorTestCase(TestCase):
         youtube_validator = YoutubeValidator(field="video_url")
 
         with self.assertRaises(serializers.ValidationError) as context:
-            youtube_validator({'video_url': 'https//www.words.com'})
+            youtube_validator({"video_url": "https//www.words.com"})
 
         self.assertIn("Недопустимая ссылка на видео.", str(context.exception))
 
         try:
-            youtube_validator({'video_url': 'https://www.youtube.com/watch?v=hcm55lU9knw'})
+            youtube_validator(
+                {"video_url": "https://www.youtube.com/watch?v=hcm55lU9knw"}
+            )
         except serializers.ValidationError:
-            self.fail('youtube_validator raised ValidatorError unexpectedly!')
+            self.fail("youtube_validator raised ValidatorError unexpectedly!")
 
 
 class SubscriptionTestCase(APITestCase):
     def setUp(self):
-        self.user1 = User.objects.create(email='user1@test.ru', password='test1', first_name='test1',
-                                              last_name='testov')
-        self.user2 = User.objects.create(email='user2@test.ru', password='test2', first_name='test2',
-                                              last_name='testovna')
-        self.module = Module.objects.create(number=10, name='Test Module', description='Test Description',
-                                            owner=self.user1)
+        self.user1 = User.objects.create(
+            email="user1@test.ru",
+            password="test1",
+            first_name="test1",
+            last_name="testov",
+        )
+        self.user2 = User.objects.create(
+            email="user2@test.ru",
+            password="test2",
+            first_name="test2",
+            last_name="testovna",
+        )
+        self.module = Module.objects.create(
+            number=10,
+            name="Test Module",
+            description="Test Description",
+            owner=self.user1,
+        )
 
     def test_subscription_creation(self):
         subscription = Subscription.objects.create(user=self.user2, module=self.module)
