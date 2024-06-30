@@ -1,9 +1,7 @@
 from unittest import TestCase
-
-from django.db.migrations import serializer
 from rest_framework.test import APITestCase
 
-from module.models import Module
+from module.models import Module, Subscription
 from module.validators import YoutubeValidator
 from users.models import User
 from django.urls import reverse
@@ -45,18 +43,7 @@ class ModuleTestCase(APITestCase):
             response.status_code, status.HTTP_201_CREATED
         )
 
-    def test_module_retrieve(self):
-        url = reverse("module:module-retrieve")
-        data = {
-            "owner": self.user.pk,
-            "number": 8,
-            "name": "Общая теория относительности",
-            "description": "Необходимость модификации ньютоновской теории гравитации."
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(
-            response.status_code, status.HTTP_201_CREATED
-        )
+
 
     def test_module_list(self):
         url = reverse("module:module-list")
@@ -122,3 +109,19 @@ class ValidatorTestCase(TestCase):
             youtube_validator({'video_url': 'https://www.youtube.com/watch?v=hcm55lU9knw'})
         except serializers.ValidationError:
             self.fail('youtube_validator raised ValidatorError unexpectedly!')
+
+
+class SubscriptionTestCase(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create(email='user1@test.ru', password='test1', first_name='test1',
+                                              last_name='testov')
+        self.user2 = User.objects.create(email='user2@test.ru', password='test2', first_name='test2',
+                                              last_name='testovna')
+        self.module = Module.objects.create(number=10, name='Test Module', description='Test Description',
+                                            owner=self.user1)
+
+    def test_subscription_creation(self):
+        subscription = Subscription.objects.create(user=self.user2, module=self.module)
+        print(subscription)
+        self.assertEqual(subscription.user, self.user2)
+        self.assertEqual(subscription.module, self.module)
